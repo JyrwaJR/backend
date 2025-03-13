@@ -1,0 +1,49 @@
+@TOKEN=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY3ZDJiZjNmZjRmZjFhOTM2ZjJiMDc4MSIsImV4cCI6MTc0MTg5NDc1M30.dhVJcJJcoZ7bBCqBFii94Tmim1QhkCgTI34E0UJI5Zo
+@REFRESH=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY3ZDJiZjNmZjRmZjFhOTM2ZjJiMDc4MSIsImV4cCI6MTc0MTk4MDI1M30.IMGTpZQlXeWwqPm1saRDwWzdwtxO0zkETk-yk5wPonE
+@BASE_URL=http://localhost:3000/api
+###
+# @name login 
+POST {{BASE_URL}}/auth HTTP/1.1
+accept: application/json
+content-type: application/json
+
+{
+  "email": "test@gmail.com",
+  "password":"password"
+}
+
+###
+# @name register 
+POST {{BASE_URL}}/auth/register HTTP/1.1
+accept: application/json
+content-type: application/json
+
+{
+  "email": "delevery@gmail.com",
+  "password":"password",
+  "name":"Admin"
+}
+
+###
+# @name refresh token 
+POST {{BASE_URL}}/auth/refresh HTTP/1.1
+accept: application/json
+content-type: application/json
+Authorization: Bearer {{REFRESH}}
+{}
+
+###
+# @name logout 
+POST {{BASE_URL}}/auth/logout HTTP/1.1
+accept: application/json
+content-type: application/json
+Authorization: Bearer {{REFRESH}}
+{}
+
+###
+# @name verify user 
+GET {{BASE_URL}}/auth HTTP/1.1
+accept: application/json
+content-type: application/json
+Authorization: Bearer {{TOKEN}}
+
