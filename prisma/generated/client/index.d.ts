@@ -1018,36 +1018,6 @@ export namespace Prisma {
    */
 
 
-  /**
-   * Count Type AuthCountOutputType
-   */
-
-  export type AuthCountOutputType = {
-    tokens: number
-  }
-
-  export type AuthCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    tokens?: boolean | AuthCountOutputTypeCountTokensArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * AuthCountOutputType without action
-   */
-  export type AuthCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AuthCountOutputType
-     */
-    select?: AuthCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * AuthCountOutputType without action
-   */
-  export type AuthCountOutputTypeCountTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: TokenWhereInput
-  }
-
 
   /**
    * Models
@@ -2239,7 +2209,6 @@ export namespace Prisma {
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     tokens?: boolean | Auth$tokensArgs<ExtArgs>
-    _count?: boolean | AuthCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["auth"]>
 
 
@@ -2257,14 +2226,13 @@ export namespace Prisma {
   export type AuthInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     tokens?: boolean | Auth$tokensArgs<ExtArgs>
-    _count?: boolean | AuthCountOutputTypeDefaultArgs<ExtArgs>
   }
 
   export type $AuthPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Auth"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
-      tokens: Prisma.$TokenPayload<ExtArgs>[]
+      tokens: Prisma.$TokenPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2637,7 +2605,7 @@ export namespace Prisma {
   export interface Prisma__AuthClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    tokens<T extends Auth$tokensArgs<ExtArgs> = {}>(args?: Subset<T, Auth$tokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    tokens<T extends Auth$tokensArgs<ExtArgs> = {}>(args?: Subset<T, Auth$tokensArgs<ExtArgs>>): Prisma__TokenClient<$Result.GetResult<Prisma.$TokenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3059,11 +3027,6 @@ export namespace Prisma {
      */
     include?: TokenInclude<ExtArgs> | null
     where?: TokenWhereInput
-    orderBy?: TokenOrderByWithRelationInput | TokenOrderByWithRelationInput[]
-    cursor?: TokenWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: TokenScalarFieldEnum | TokenScalarFieldEnum[]
   }
 
   /**
@@ -4253,17 +4216,17 @@ export namespace Prisma {
   export type TokenWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     token?: string
+    authId?: string
     AND?: TokenWhereInput | TokenWhereInput[]
     OR?: TokenWhereInput[]
     NOT?: TokenWhereInput | TokenWhereInput[]
     expiresAt?: DateTimeFilter<"Token"> | Date | string
     issuedAt?: DateTimeFilter<"Token"> | Date | string
     revokedAt?: DateTimeNullableFilter<"Token"> | Date | string | null
-    authId?: StringFilter<"Token"> | string
     createdAt?: DateTimeFilter<"Token"> | Date | string
     updatedAt?: DateTimeFilter<"Token"> | Date | string
     auth?: XOR<AuthScalarRelationFilter, AuthWhereInput>
-  }, "id" | "token">
+  }, "id" | "token" | "authId">
 
   export type TokenOrderByWithAggregationInput = {
     id?: SortOrder
@@ -4304,7 +4267,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Auth"> | Date | string
     updatedAt?: DateTimeFilter<"Auth"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    tokens?: TokenListRelationFilter
+    tokens?: XOR<TokenNullableScalarRelationFilter, TokenWhereInput> | null
   }
 
   export type AuthOrderByWithRelationInput = {
@@ -4315,7 +4278,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
-    tokens?: TokenOrderByRelationAggregateInput
+    tokens?: TokenOrderByWithRelationInput
   }
 
   export type AuthWhereUniqueInput = Prisma.AtLeast<{
@@ -4329,7 +4292,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Auth"> | Date | string
     updatedAt?: DateTimeFilter<"Auth"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    tokens?: TokenListRelationFilter
+    tokens?: XOR<TokenNullableScalarRelationFilter, TokenWhereInput> | null
   }, "id" | "email" | "userId">
 
   export type AuthOrderByWithAggregationInput = {
@@ -4495,7 +4458,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutAuthInput
-    tokens?: TokenCreateNestedManyWithoutAuthInput
+    tokens?: TokenCreateNestedOneWithoutAuthInput
   }
 
   export type AuthUncheckedCreateInput = {
@@ -4505,7 +4468,7 @@ export namespace Prisma {
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    tokens?: TokenUncheckedCreateNestedManyWithoutAuthInput
+    tokens?: TokenUncheckedCreateNestedOneWithoutAuthInput
   }
 
   export type AuthUpdateInput = {
@@ -4514,7 +4477,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutAuthNestedInput
-    tokens?: TokenUpdateManyWithoutAuthNestedInput
+    tokens?: TokenUpdateOneWithoutAuthNestedInput
   }
 
   export type AuthUncheckedUpdateInput = {
@@ -4523,7 +4486,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    tokens?: TokenUncheckedUpdateManyWithoutAuthNestedInput
+    tokens?: TokenUncheckedUpdateOneWithoutAuthNestedInput
   }
 
   export type AuthCreateManyInput = {
@@ -4757,14 +4720,9 @@ export namespace Prisma {
     isNot?: UserWhereInput
   }
 
-  export type TokenListRelationFilter = {
-    every?: TokenWhereInput
-    some?: TokenWhereInput
-    none?: TokenWhereInput
-  }
-
-  export type TokenOrderByRelationAggregateInput = {
-    _count?: SortOrder
+  export type TokenNullableScalarRelationFilter = {
+    is?: TokenWhereInput | null
+    isNot?: TokenWhereInput | null
   }
 
   export type AuthCountOrderByAggregateInput = {
@@ -4908,18 +4866,16 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type TokenCreateNestedManyWithoutAuthInput = {
-    create?: XOR<TokenCreateWithoutAuthInput, TokenUncheckedCreateWithoutAuthInput> | TokenCreateWithoutAuthInput[] | TokenUncheckedCreateWithoutAuthInput[]
-    connectOrCreate?: TokenCreateOrConnectWithoutAuthInput | TokenCreateOrConnectWithoutAuthInput[]
-    createMany?: TokenCreateManyAuthInputEnvelope
-    connect?: TokenWhereUniqueInput | TokenWhereUniqueInput[]
+  export type TokenCreateNestedOneWithoutAuthInput = {
+    create?: XOR<TokenCreateWithoutAuthInput, TokenUncheckedCreateWithoutAuthInput>
+    connectOrCreate?: TokenCreateOrConnectWithoutAuthInput
+    connect?: TokenWhereUniqueInput
   }
 
-  export type TokenUncheckedCreateNestedManyWithoutAuthInput = {
-    create?: XOR<TokenCreateWithoutAuthInput, TokenUncheckedCreateWithoutAuthInput> | TokenCreateWithoutAuthInput[] | TokenUncheckedCreateWithoutAuthInput[]
-    connectOrCreate?: TokenCreateOrConnectWithoutAuthInput | TokenCreateOrConnectWithoutAuthInput[]
-    createMany?: TokenCreateManyAuthInputEnvelope
-    connect?: TokenWhereUniqueInput | TokenWhereUniqueInput[]
+  export type TokenUncheckedCreateNestedOneWithoutAuthInput = {
+    create?: XOR<TokenCreateWithoutAuthInput, TokenUncheckedCreateWithoutAuthInput>
+    connectOrCreate?: TokenCreateOrConnectWithoutAuthInput
+    connect?: TokenWhereUniqueInput
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
@@ -4935,32 +4891,24 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAuthInput, UserUpdateWithoutAuthInput>, UserUncheckedUpdateWithoutAuthInput>
   }
 
-  export type TokenUpdateManyWithoutAuthNestedInput = {
-    create?: XOR<TokenCreateWithoutAuthInput, TokenUncheckedCreateWithoutAuthInput> | TokenCreateWithoutAuthInput[] | TokenUncheckedCreateWithoutAuthInput[]
-    connectOrCreate?: TokenCreateOrConnectWithoutAuthInput | TokenCreateOrConnectWithoutAuthInput[]
-    upsert?: TokenUpsertWithWhereUniqueWithoutAuthInput | TokenUpsertWithWhereUniqueWithoutAuthInput[]
-    createMany?: TokenCreateManyAuthInputEnvelope
-    set?: TokenWhereUniqueInput | TokenWhereUniqueInput[]
-    disconnect?: TokenWhereUniqueInput | TokenWhereUniqueInput[]
-    delete?: TokenWhereUniqueInput | TokenWhereUniqueInput[]
-    connect?: TokenWhereUniqueInput | TokenWhereUniqueInput[]
-    update?: TokenUpdateWithWhereUniqueWithoutAuthInput | TokenUpdateWithWhereUniqueWithoutAuthInput[]
-    updateMany?: TokenUpdateManyWithWhereWithoutAuthInput | TokenUpdateManyWithWhereWithoutAuthInput[]
-    deleteMany?: TokenScalarWhereInput | TokenScalarWhereInput[]
+  export type TokenUpdateOneWithoutAuthNestedInput = {
+    create?: XOR<TokenCreateWithoutAuthInput, TokenUncheckedCreateWithoutAuthInput>
+    connectOrCreate?: TokenCreateOrConnectWithoutAuthInput
+    upsert?: TokenUpsertWithoutAuthInput
+    disconnect?: TokenWhereInput | boolean
+    delete?: TokenWhereInput | boolean
+    connect?: TokenWhereUniqueInput
+    update?: XOR<XOR<TokenUpdateToOneWithWhereWithoutAuthInput, TokenUpdateWithoutAuthInput>, TokenUncheckedUpdateWithoutAuthInput>
   }
 
-  export type TokenUncheckedUpdateManyWithoutAuthNestedInput = {
-    create?: XOR<TokenCreateWithoutAuthInput, TokenUncheckedCreateWithoutAuthInput> | TokenCreateWithoutAuthInput[] | TokenUncheckedCreateWithoutAuthInput[]
-    connectOrCreate?: TokenCreateOrConnectWithoutAuthInput | TokenCreateOrConnectWithoutAuthInput[]
-    upsert?: TokenUpsertWithWhereUniqueWithoutAuthInput | TokenUpsertWithWhereUniqueWithoutAuthInput[]
-    createMany?: TokenCreateManyAuthInputEnvelope
-    set?: TokenWhereUniqueInput | TokenWhereUniqueInput[]
-    disconnect?: TokenWhereUniqueInput | TokenWhereUniqueInput[]
-    delete?: TokenWhereUniqueInput | TokenWhereUniqueInput[]
-    connect?: TokenWhereUniqueInput | TokenWhereUniqueInput[]
-    update?: TokenUpdateWithWhereUniqueWithoutAuthInput | TokenUpdateWithWhereUniqueWithoutAuthInput[]
-    updateMany?: TokenUpdateManyWithWhereWithoutAuthInput | TokenUpdateManyWithWhereWithoutAuthInput[]
-    deleteMany?: TokenScalarWhereInput | TokenScalarWhereInput[]
+  export type TokenUncheckedUpdateOneWithoutAuthNestedInput = {
+    create?: XOR<TokenCreateWithoutAuthInput, TokenUncheckedCreateWithoutAuthInput>
+    connectOrCreate?: TokenCreateOrConnectWithoutAuthInput
+    upsert?: TokenUpsertWithoutAuthInput
+    disconnect?: TokenWhereInput | boolean
+    delete?: TokenWhereInput | boolean
+    connect?: TokenWhereUniqueInput
+    update?: XOR<XOR<TokenUpdateToOneWithWhereWithoutAuthInput, TokenUpdateWithoutAuthInput>, TokenUncheckedUpdateWithoutAuthInput>
   }
 
   export type AuthCreateNestedOneWithoutUserInput = {
@@ -5270,10 +5218,6 @@ export namespace Prisma {
     create: XOR<TokenCreateWithoutAuthInput, TokenUncheckedCreateWithoutAuthInput>
   }
 
-  export type TokenCreateManyAuthInputEnvelope = {
-    data: TokenCreateManyAuthInput | TokenCreateManyAuthInput[]
-  }
-
   export type UserUpsertWithoutAuthInput = {
     update: XOR<UserUpdateWithoutAuthInput, UserUncheckedUpdateWithoutAuthInput>
     create: XOR<UserCreateWithoutAuthInput, UserUncheckedCreateWithoutAuthInput>
@@ -5301,34 +5245,33 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type TokenUpsertWithWhereUniqueWithoutAuthInput = {
-    where: TokenWhereUniqueInput
+  export type TokenUpsertWithoutAuthInput = {
     update: XOR<TokenUpdateWithoutAuthInput, TokenUncheckedUpdateWithoutAuthInput>
     create: XOR<TokenCreateWithoutAuthInput, TokenUncheckedCreateWithoutAuthInput>
+    where?: TokenWhereInput
   }
 
-  export type TokenUpdateWithWhereUniqueWithoutAuthInput = {
-    where: TokenWhereUniqueInput
+  export type TokenUpdateToOneWithWhereWithoutAuthInput = {
+    where?: TokenWhereInput
     data: XOR<TokenUpdateWithoutAuthInput, TokenUncheckedUpdateWithoutAuthInput>
   }
 
-  export type TokenUpdateManyWithWhereWithoutAuthInput = {
-    where: TokenScalarWhereInput
-    data: XOR<TokenUpdateManyMutationInput, TokenUncheckedUpdateManyWithoutAuthInput>
+  export type TokenUpdateWithoutAuthInput = {
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    issuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type TokenScalarWhereInput = {
-    AND?: TokenScalarWhereInput | TokenScalarWhereInput[]
-    OR?: TokenScalarWhereInput[]
-    NOT?: TokenScalarWhereInput | TokenScalarWhereInput[]
-    id?: StringFilter<"Token"> | string
-    token?: StringFilter<"Token"> | string
-    expiresAt?: DateTimeFilter<"Token"> | Date | string
-    issuedAt?: DateTimeFilter<"Token"> | Date | string
-    revokedAt?: DateTimeNullableFilter<"Token"> | Date | string | null
-    authId?: StringFilter<"Token"> | string
-    createdAt?: DateTimeFilter<"Token"> | Date | string
-    updatedAt?: DateTimeFilter<"Token"> | Date | string
+  export type TokenUncheckedUpdateWithoutAuthInput = {
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    issuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AuthCreateWithoutUserInput = {
@@ -5337,7 +5280,7 @@ export namespace Prisma {
     password?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    tokens?: TokenCreateNestedManyWithoutAuthInput
+    tokens?: TokenCreateNestedOneWithoutAuthInput
   }
 
   export type AuthUncheckedCreateWithoutUserInput = {
@@ -5346,7 +5289,7 @@ export namespace Prisma {
     password?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    tokens?: TokenUncheckedCreateNestedManyWithoutAuthInput
+    tokens?: TokenUncheckedCreateNestedOneWithoutAuthInput
   }
 
   export type AuthCreateOrConnectWithoutUserInput = {
@@ -5370,7 +5313,7 @@ export namespace Prisma {
     password?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    tokens?: TokenUpdateManyWithoutAuthNestedInput
+    tokens?: TokenUpdateOneWithoutAuthNestedInput
   }
 
   export type AuthUncheckedUpdateWithoutUserInput = {
@@ -5378,44 +5321,7 @@ export namespace Prisma {
     password?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    tokens?: TokenUncheckedUpdateManyWithoutAuthNestedInput
-  }
-
-  export type TokenCreateManyAuthInput = {
-    id?: string
-    token: string
-    expiresAt: Date | string
-    issuedAt?: Date | string
-    revokedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type TokenUpdateWithoutAuthInput = {
-    token?: StringFieldUpdateOperationsInput | string
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    issuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type TokenUncheckedUpdateWithoutAuthInput = {
-    token?: StringFieldUpdateOperationsInput | string
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    issuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type TokenUncheckedUpdateManyWithoutAuthInput = {
-    token?: StringFieldUpdateOperationsInput | string
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    issuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tokens?: TokenUncheckedUpdateOneWithoutAuthNestedInput
   }
 
 

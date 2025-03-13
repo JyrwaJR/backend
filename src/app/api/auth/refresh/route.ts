@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     });
 
     if (!tokenEntry || !tokenEntry.auth || !tokenEntry.auth.user) {
-      return NextResponse.json({ message: "User not found" }, { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
     const newAccessToken = await generateAccessToken(tokenEntry?.auth?.user);
 

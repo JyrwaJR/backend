@@ -1,25 +1,25 @@
 generator client {
   provider = "prisma-client-js"
-output   = "./generated/client"
+  output   = "./generated/client"
 }
 
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
-  
 }
 
 model Token {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  token     String   @unique
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  token     String    @unique
   expiresAt DateTime
-  issuedAt  DateTime @default(now())
+  issuedAt  DateTime  @default(now())
   revokedAt DateTime? // Nullable: Track revoked tokens
-  authId    String   @db.ObjectId @unique
-  auth      Auth     @relation(fields: [authId], references: [id], onDelete: Cascade) 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-@@index([authId,token,id,revokedAt])
+  authId    String    @unique @db.ObjectId
+  auth      Auth      @relation(fields: [authId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([authId, token, id, revokedAt,updatedAt])
 }
 
 model Auth {
@@ -31,17 +31,20 @@ model Auth {
   tokens    Token?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId, email, id])
 }
 
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  isVerified Boolean @default(false)
-  role      Role     @default(CLIENT)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  auth      Auth?
-  @@index([id,role,name])
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  isVerified Boolean  @default(false)
+  role       Role     @default(CLIENT)
+  auth       Auth?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([id, role, name])
 }
 
 enum Role {

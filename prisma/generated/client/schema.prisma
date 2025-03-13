@@ -14,10 +14,12 @@ model Token {
   expiresAt DateTime
   issuedAt  DateTime  @default(now())
   revokedAt DateTime? // Nullable: Track revoked tokens
-  authId    String    @db.ObjectId
+  authId    String    @unique @db.ObjectId
   auth      Auth      @relation(fields: [authId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  @@index([authId, token, id, revokedAt])
 }
 
 model Auth {
@@ -26,7 +28,7 @@ model Auth {
   password  String?
   userId    String   @unique @db.ObjectId
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tokens    Token[] // Allow multiple tokens per auth
+  tokens    Token?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
