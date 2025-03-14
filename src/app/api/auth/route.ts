@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     });
 
     if (!auth || !auth.user) {
-      return Response.json({ error: "Invalid credentials" }, { status: 401 });
+      return Response.json({ error: "User not found" }, { status: 401 });
     }
 
     // Compare hashed password
@@ -56,8 +56,21 @@ export async function POST(req: Request) {
     // Generate Tokens
     const accessToken = await generateAccessToken(auth.user);
     const refreshToken = await generateRefreshToken(auth.user);
-    await prisma.token.update({
-      where: { authId: auth.id },
+    const token = await prisma.token.findFirst({
+      where: { authId: auth.id, expiresAt: new Date(), revokedAt: null },
+    });
+    if (token) {
+      await prisma.token.update({
+        where: { id: token.id, expiresAt: new Date(), revokedAt: null },
+        data: {
+          token: refreshToken,
+          revokedAt: null,
+          expiresAt: new Date(Date.now() + 7 * 60 * 60 * 1000),
+          authId: auth.id,
+        },
+      });
+    }
+    await prisma.token.create({
       data: {
         token: refreshToken,
         revokedAt: null,
@@ -65,8 +78,7 @@ export async function POST(req: Request) {
         authId: auth.id,
       },
     });
-
-    return Response.json(
+    return NextResponse.json(
       {
         message: "Login successful",
         token: accessToken,

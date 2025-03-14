@@ -115,10 +115,13 @@ exports.Prisma.TokenScalarFieldEnum = {
   token: 'token',
   expiresAt: 'expiresAt',
   issuedAt: 'issuedAt',
+  lastUsedAt: 'lastUsedAt',
   revokedAt: 'revokedAt',
+  revokedBy: 'revokedBy',
   authId: 'authId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.AuthScalarFieldEnum = {
@@ -126,17 +129,22 @@ exports.Prisma.AuthScalarFieldEnum = {
   email: 'email',
   password: 'password',
   userId: 'userId',
+  status: 'status',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  email: 'email',
+  phone: 'phone',
   isVerified: 'isVerified',
   role: 'role',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -148,6 +156,12 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
+exports.AuthStatus = exports.$Enums.AuthStatus = {
+  ACTIVE: 'ACTIVE',
+  SUSPENDED: 'SUSPENDED',
+  BANNED: 'BANNED'
+};
+
 exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN',
   CLIENT: 'CLIENT',

@@ -9,17 +9,20 @@ datasource db {
 }
 
 model Token {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  token     String    @unique
-  expiresAt DateTime
-  issuedAt  DateTime  @default(now())
-  revokedAt DateTime? // Nullable: Track revoked tokens
-  authId    String    @unique @db.ObjectId
-  auth      Auth      @relation(fields: [authId], references: [id], onDelete: Cascade)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  token      String    @unique
+  expiresAt  DateTime
+  issuedAt   DateTime  @default(now())
+  lastUsedAt DateTime? // Tracks last usage for security
+  revokedAt  DateTime? // Nullable: Track revoked tokens
+  revokedBy  String?   // Stores user/admin ID who revoked the token
+  authId     String    @db.ObjectId
+  auth       Auth      @relation(fields: [authId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime? // Soft delete for token management
 
-  @@index([authId, token, id, revokedAt,updatedAt])
+  @@index([authId, token, id, revokedAt, lastUsedAt])
 }
 
 model Auth {
@@ -28,9 +31,11 @@ model Auth {
   password  String?
   userId    String   @unique @db.ObjectId
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tokens    Token?
+  tokens    Token[]
+  status    AuthStatus @default(ACTIVE) // New: Manage auth states
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime? // Soft delete instead of permanent removal
 
   @@index([userId, email, id])
 }
@@ -38,11 +43,14 @@ model Auth {
 model User {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   name       String
+  email      String   @unique
+  phone      String?  // New: Optional phone field
   isVerified Boolean  @default(false)
   role       Role     @default(CLIENT)
   auth       Auth?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  deletedAt  DateTime? // Soft delete support
 
   @@index([id, role, name])
 }
@@ -51,4 +59,10 @@ enum Role {
   ADMIN
   CLIENT
   DELIVERY
+}
+
+enum AuthStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
 }

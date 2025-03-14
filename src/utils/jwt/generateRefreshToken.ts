@@ -9,6 +9,5 @@ export const generateRefreshToken = async (
 ): Promise<string> => {
   return await new SignJWT({ id: user.id }) // Payload
     .setProtectedHeader({ alg: "HS256" }) // Algorithm
-    .setExpirationTime(env.JWT_REFRESH_EXPIRES_IN) // Expiry
     .sign(secret); // Sign with secret
 };
