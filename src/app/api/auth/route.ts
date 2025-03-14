@@ -1,11 +1,12 @@
 import { prisma } from "@/lib/db";
 import { getUserById } from "@/services/auth/getUserById";
-import { updateUserRefreshTokenByUserId } from "@/services/auth/updateUserRefreshTokenByUserId";
+import { errorHandler } from "@/utils/errorHandler";
 import {
   generateAccessToken,
   generateRefreshToken,
   verifyAccessToken,
 } from "@/utils/jwt";
+import { loginSchema } from "@/utils/validation/auth/loginSchema";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 
@@ -28,17 +29,14 @@ export async function GET(req: Request) {
       { status: 200 },
     );
   } catch (error) {
-    return NextResponse.json(
-      { message: "Internal Server Error", error },
-      { status: 500 },
-    );
+    return errorHandler(error);
   }
 }
 
 export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
-
+    loginSchema.parse({ email, password });
     // Find user by email (Auth table includes hashed password)
     const auth = await prisma.auth.findUnique({
       where: { email },
@@ -58,7 +56,8 @@ export async function POST(req: Request) {
     // Generate Tokens
     const accessToken = await generateAccessToken(auth.user);
     const refreshToken = await generateRefreshToken(auth.user);
-    await prisma.token.create({
+    await prisma.token.update({
+      where: { authId: auth.id },
       data: {
         token: refreshToken,
         revokedAt: null,
@@ -76,10 +75,6 @@ export async function POST(req: Request) {
       { status: 200 },
     );
   } catch (error) {
-    console.error(error);
-    return Response.json(
-      { message: "Internal Server Error", error },
-      { status: 500 },
-    );
+    return errorHandler(error);
   }
 }

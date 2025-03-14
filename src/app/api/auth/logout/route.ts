@@ -1,7 +1,7 @@
 import { getUserById } from "@/services/auth/getUserById";
 import { updateUserRefreshTokenByUserId } from "@/services/auth/updateUserRefreshTokenByUserId";
+import { errorHandler } from "@/utils/errorHandler";
 import { verifyRefreshToken } from "@/utils/jwt";
-import { JWTExpired } from "jose/errors";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -32,15 +32,6 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   } catch (error) {
-    if (error instanceof JWTExpired) {
-      return NextResponse.json(
-        { message: "Please login again", error },
-        { status: 401 },
-      );
-    }
-    return NextResponse.json(
-      { message: "Internal Server Error", error },
-      { status: 500 },
-    );
+    return errorHandler(error);
   }
 }

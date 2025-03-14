@@ -1,19 +1,14 @@
+import { env } from "@/env";
 import { prisma } from "@/lib/db";
+import { errorHandler } from "@/utils/errorHandler";
+import { registerSchema } from "@/utils/validation/auth/registerSchema";
 import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
     const { name, email, password } = await req.json();
-
-    // Validate input
-    if (!name || !email || !password) {
-      return NextResponse.json(
-        { error: "All fields are required" },
-        { status: 400 },
-      );
-    }
-
+    registerSchema.parse({ name, email, password });
     // Check if user already exists
     const existingUser = await prisma.auth.findUnique({ where: { email } });
     if (existingUser) {
@@ -54,10 +49,6 @@ export async function POST(req: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    console.error("Registration Error:", error);
-    return NextResponse.json(
-      { message: "Internal Server Error", error },
-      { status: 500 },
-    );
+    return errorHandler(error);
   }
 }

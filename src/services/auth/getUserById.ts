@@ -6,6 +6,10 @@ type Props = {
 export async function getUserById({ userId }: Props) {
   return await prisma.user.findUnique({
     where: { id: userId },
-    include: { auth: true },
+    include: {
+      auth: {
+        omit: { password: true, userId: true },
+      },
+    },
   });
 }
